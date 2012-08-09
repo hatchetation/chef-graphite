@@ -1,12 +1,12 @@
 package "python-twisted"
 package "python-simplejson"
 
-version = node[:graphite][:version]
-pyver = node[:graphite][:python_version]
+version = node['graphite']['version']
+pyver = node['graphite']['python_version']
 
 remote_file "/usr/src/carbon-#{version}.tar.gz" do
-  source node[:graphite][:carbon][:uri]
-  checksum node[:graphite][:carbon][:checksum]
+  source node['graphite']['carbon']['uri']
+  checksum node['graphite']['carbon']['checksum']
 end
 
 execute "untar carbon" do
@@ -24,9 +24,9 @@ end
 template "/opt/graphite/conf/carbon.conf" do
   owner node['apache']['user']
   group node['apache']['group']
-  variables( :line_receiver_interface => node[:graphite][:carbon][:line_receiver_interface],
-             :pickle_receiver_interface => node[:graphite][:carbon][:pickle_receiver_interface],
-             :cache_query_interface => node[:graphite][:carbon][:cache_query_interface] )
+  variables( :line_receiver_interface => node['graphite']['carbon']['line_receiver_interface'],
+             :pickle_receiver_interface => node['graphite']['carbon']['pickle_receiver_interface'],
+             :cache_query_interface => node['graphite']['carbon']['cache_query_interface'] )
   notifies :restart, "service[carbon-cache]"
 end
 

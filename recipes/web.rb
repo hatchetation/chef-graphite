@@ -1,7 +1,7 @@
 include_recipe "apache2::mod_python"
 
-version = node[:graphite][:version]
-pyver = node[:graphite][:python_version]
+version = node['graphite']['version']
+pyver = node['graphite']['python_version']
 
 package "python-cairo-dev"
 package "python-django"
@@ -10,8 +10,8 @@ package "python-memcache"
 package "python-rrdtool"
 
 remote_file "/usr/src/graphite-web-#{version}.tar.gz" do
-  source node[:graphite][:graphite_web][:uri]
-  checksum node[:graphite][:graphite_web][:checksum]
+  source node['graphite']['graphite_web']['uri']
+  checksum node['graphite']['graphite_web']['checksum']
 end
 
 execute "untar graphite-web" do
@@ -59,7 +59,7 @@ cookbook_file "/opt/graphite/storage/graphite.db" do
 end
 
 execute "set admin password" do
-  command "/opt/graphite/bin/set_admin_passwd.py root #{node[:graphite][:password]}"
+  command "/opt/graphite/bin/set_admin_passwd.py root #{node['graphite']['password']}"
   action :nothing
 end
 
