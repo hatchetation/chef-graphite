@@ -30,7 +30,7 @@ NameVirtualHost *:<%= node['graphite']['listen_port'] %>
                 SetHandler None
         </Location>
 
-        <% if node['recipes'].include? "ganglia::web" -%>
+        <% if node.recipes? "ganglia::web" -%>
 	<Location "/ganglia/">
 	        SetHandler None
 	</Location>
