@@ -1,6 +1,7 @@
 package "python-twisted"
 package "python-simplejson"
 
+basedir = node['graphite']['base_dir']
 version = node['graphite']['version']
 pyver = node['graphite']['python_version']
 
@@ -17,11 +18,11 @@ end
 
 execute "install carbon" do
   command "python setup.py install"
-  creates "#{node['graphite']['base_dir']}/lib/carbon-#{version}-py#{pyver}.egg-info"
+  creates "#{basedir}/lib/carbon-#{version}-py#{pyver}.egg-info"
   cwd "/usr/src/carbon-#{version}"
 end
 
-template "#{node['graphite']['base_dir']}/conf/carbon.conf" do
+template "#{basedir}/conf/carbon.conf" do
   owner node['apache']['user']
   group node['apache']['group']
   variables( :line_receiver_interface => node['graphite']['carbon']['line_receiver_interface'],
@@ -30,20 +31,20 @@ template "#{node['graphite']['base_dir']}/conf/carbon.conf" do
   notifies :restart, "service[carbon-cache]"
 end
 
-template "#{node['graphite']['base_dir']}/conf/storage-schemas.conf" do
+template "#{basedir}/conf/storage-schemas.conf" do
   owner node['apache']['user']
   group node['apache']['group']
 end
 
 execute "carbon: change graphite storage permissions to apache user" do
-  command "chown -R www-data:www-data #{node['graphite']['base_dir']}/storage"
+  command "chown -R #{node['apache']['user']}:#{node['apache']['group']} #{basedir}/storage"
   only_if do
     f = File.stat("#{node['graphite']['base_dir']}/storage")
     f.uid == 0 and f.gid == 0
   end
 end
 
-directory "#{node['graphite']['base_dir']}/lib/twisted/plugins/" do
+directory "#{basedir}/lib/twisted/plugins/" do
   owner node['apache']['user']
   group node['apache']['group']
 end

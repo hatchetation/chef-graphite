@@ -5,6 +5,7 @@ NameVirtualHost *:<%= node['graphite']['listen_port'] %>
 
 # You may need to manually edit this file to fit your needs.
 <VirtualHost *:<%= node['graphite']['listen_port']%>>
+        ServerAdmin     <%= node['graphite']['sysadmin_email'] %>
         ServerName <%= node['graphite']['url'] %>
         <% unless node['graphite']['url_aliases'].empty? %>
         ServerAlias <%= [node['graphite']['url_aliases']].flatten.compact.join(" ") %>
@@ -14,8 +15,23 @@ NameVirtualHost *:<%= node['graphite']['listen_port'] %>
         CustomLog <%= node['graphite']['base_dir'] %>/storage/log/webapp/access.log common
 
         <Location "/">
+                AuthName "Graphite Server"
+<% case node['graphite']['server_auth_method'] -%>
+<% when "openid" -%>
+                AuthType OpenID
+                require user <%= node['apache']['allowed_openids'].join(' ') %>
+                AuthOpenIDDBLocation <%= node['apache']['mod_auth_openid']['dblocation'] %>
+<% when "htauth" -%>
+                AuthType Basic
+                AuthUserFile "<%= node['graphite']['conf_dir'] %>/htpasswd.users"
+                require valid-user
+<%
+  else
+    # Assuming no authentication
+  end
+-%>
                 SetHandler python-program
-                PythonPath "['<%= node['graphite']['base_dir'] %>'] + sys.path"
+                PythonPath "['<%= node['graphite']['doc_root'] %>'] + sys.path"
                 PythonHandler django.core.handlers.modpython
                 SetEnv DJANGO_SETTINGS_MODULE graphite.settings
                 PythonDebug Off
@@ -30,16 +46,17 @@ NameVirtualHost *:<%= node['graphite']['listen_port'] %>
                 SetHandler None
         </Location>
 
-        <% if node.recipes? "ganglia::web" -%>
-	<Location "/ganglia/">
-	        SetHandler None
-	</Location>
-        <% end -%>
 
-	# NOTE: In order for the django admin site media to work you
-	# must change @DJANGO_ROOT@ to be the path to your django
-	# installation, which is probably something like:
-	# /usr/lib/python2.6/site-packages/django
+<% if node.recipe? "ganglia::web" -%>
+        <Location "/ganglia/">
+                SetHandler None
+        </Location>
+<% end -%>
+
+        # NOTE: In order for the django admin site media to work you
+        # must change @DJANGO_ROOT@ to be the path to your django
+        # installation, which is probably something like:
+        # /usr/lib/python2.6/site-packages/django
         Alias /media/ "@DJANGO_ROOT@/contrib/admin/media/"
 
 </VirtualHost>

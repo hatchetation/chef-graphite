@@ -1,14 +1,33 @@
 include_recipe "apache2::mod_python"
 
-basedir = node['graphite']['base_dir']
-version = node['graphite']['version']
-pyver = node['graphite']['python_version']
-
 package "python-cairo-dev"
 package "python-django"
 package "python-django-tagging"
 package "python-memcache"
 package "python-rrdtool"
+
+basedir = node['graphite']['base_dir']
+version = node['graphite']['version']
+pyver = node['graphite']['python_version']
+
+
+sysadmins = if Chef::Config[:solo]
+  Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+  []
+else
+  search(:users, 'groups:sysadmin')
+end
+
+if node['public_domain']
+  case node.chef_environment
+  when "production"
+    public_domain = node['public_domain']
+  else
+    public_domain = "#{node.chef_environment}.#{node['public_domain']}"
+  end
+else
+  public_domain = node['domain']
+end
 
 remote_file "/usr/src/graphite-web-#{version}.tar.gz" do
   source node['graphite']['graphite_web']['uri']
@@ -27,11 +46,11 @@ execute "install graphite-web" do
   cwd "/usr/src/graphite-web-#{version}"
 end
 
-template "/etc/apache2/sites-available/graphite" do
-  source "graphite-vhost.conf.erb"
+directory node['graphite']['conf_dir'] do
+  owner node['apache']['user']
+  group node['apache']['group']
+  recursive true
 end
-
-apache_site "graphite"
 
 directory "#{basedir}/storage" do
   owner node['apache']['user']
@@ -70,3 +89,33 @@ file "#{basedir}/storage/graphite.db" do
   group node['apache']['group']
   mode 00644
 end
+
+case node['graphite']['server_auth_method']
+when "openid"
+  include_recipe "apache2::mod_auth_openid"
+else
+  template "#{node['graphite']['conf_dir']}/htpasswd.users" do
+    source "htpasswd.users.erb"
+    owner node['apache']['user']
+    group node['apache']['group']
+    mode 0640
+    variables(
+      :sysadmins => sysadmins
+    )
+  end
+end
+
+apache_site "000-default" do
+  enable false
+end
+
+template "#{node['apache']['dir']}/sites-available/graphite.conf" do
+  source "graphite-vhost.conf.erb"
+  mode 0644
+  variables :public_domain => public_domain
+  if ::File.symlink?("#{node['apache']['dir']}/sites-enabled/graphite.conf")
+    notifies :reload, "service[apache2]"
+  end
+end
+
+apache_site "graphite"
