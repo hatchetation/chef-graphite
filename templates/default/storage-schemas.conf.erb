@@ -1,4 +1,9 @@
 [catchall]
 priority = 0
 pattern = ^.*
-retentions = 10:2160,60:100800,600:262974
+retentions = 10s:6h,1m:70d,5m:2y
+
+[ganglia]
+priority = 100
+pattern = ^sea.*
+retentions = 1m:70d,5m:2y
