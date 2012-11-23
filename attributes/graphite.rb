@@ -20,7 +20,7 @@ default['graphite']['url'] = "graphite"
 default['graphite']['url_aliases'] = []
 default['graphite']['listen_port'] = "80"
 default['graphite']['base_dir'] = "/opt/graphite"
-default['graphite']['docroot']     = "#{node['graphite']['base_dir']}/webapp"
+default['graphite']['doc_root']     = "#{node['graphite']['base_dir']}/webapp"
 default['graphite']['conf_dir']    = "/etc/graphite"
 
 default['graphite']['server_auth_method'] = "none" # or openid, htauth
