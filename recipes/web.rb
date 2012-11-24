@@ -1,4 +1,5 @@
 include_recipe "apache2::mod_python"
+include_recipe "apache2::mod_headers"
 
 package "python-cairo-dev"
 package "python-django"

@@ -14,6 +14,10 @@ NameVirtualHost *:<%= node['graphite']['listen_port'] %>
         ErrorLog <%= node['graphite']['base_dir'] %>/storage/log/webapp/error.log
         CustomLog <%= node['graphite']['base_dir'] %>/storage/log/webapp/access.log common
 
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, OPTIONS"
+        Header set Access-Control-Allow-Headers "origin, authorization, accept"
+
         <Location "/">
                 AuthName "Graphite Server"
 <% case node['graphite']['server_auth_method'] -%>
