@@ -7,6 +7,8 @@ default['graphite']['carbon']['line_receiver_interface'] =   "127.0.0.1"
 default['graphite']['carbon']['pickle_receiver_interface'] = "127.0.0.1"
 default['graphite']['carbon']['cache_query_interface'] =     "127.0.0.1"
 default['graphite']['carbon']['service_type'] = "runit"
+default['graphite']['carbon']['log_updates'] = 'True'
+default['graphite']['carbon']['max_update_rate'] = 1000
 
 default['graphite']['whisper']['uri'] = "http://launchpadlibrarian.net/82112367/whisper-#{node['graphite']['version']}.tar.gz"
 default['graphite']['whisper']['checksum'] = "66c05eafe8d86"
