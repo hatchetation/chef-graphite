@@ -105,6 +105,7 @@ template "#{docroot}/graphite/local_settings.py" do
   mode 00755
   variables(:timezone => node['graphite']['timezone'],
             :debug => node['graphite']['web']['debug'],
+            :log_metric_access => node['graphite']['web']['log_metric_access'],
             :base_dir => node['graphite']['base_dir'],
             :doc_root => node['graphite']['doc_root'],
             :storage_dir => node['graphite']['storage_dir'],
