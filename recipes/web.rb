@@ -112,6 +112,7 @@ template "#{docroot}/graphite/local_settings.py" do
             :storage_dir => node['graphite']['storage_dir'],
             :cluster_servers => node['graphite']['web']['cluster_servers'],
             :carbonlink_hosts => node['graphite']['web']['carbonlink_hosts'],
+            :carbonlink_timeout => node['graphite']['web']['carbonlink_timeout'],
             :memcached_hosts => node['graphite']['web']['memcached_hosts'])
   notifies :reload, graphite_web_service_resource
 end
