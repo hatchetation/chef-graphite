@@ -38,7 +38,7 @@ MEMCACHE_HOSTS = [ <%= @memcached_hosts.map do |server|
   "\"#{server}\""
 end.join(', ') %> ]
 
-#DEFAULT_CACHE_DURATION = 60 # Cache images and data for 1 minute
+DEFAULT_CACHE_DURATION = <%= @default_cache_duration %> # in seconds
 
 
 #####################################
