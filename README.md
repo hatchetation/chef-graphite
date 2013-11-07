@@ -62,7 +62,7 @@ carbon-cache.py attributes
 carbon-relay.py attributes
 --------------------------
 
-* `node['graphite']['relay_rules']` - an array with relay rules for sending metrics to a certain backends, used to generate the *relay-rules.conf* file ([see the example below](#relay_rules-example))
+* `node['graphite']['relay_rules']` - an array with relay rules for sending metrics to certain backends, used to generate the *relay-rules.conf* file ([see the example below](#relay_rules-example))
 * `node['graphite']['carbon']['relay']['line_receiver_interface']` - line interface IP (defaults to 0.0.0.0)
 * `node['graphite']['carbon']['relay']['line_receiver_port']` - line interface port (defaults to 2013)
 * `node['graphite']['carbon']['relay']['pickle_receiver_interface']` - pickle receiver IP (defaults to 0.0.0.0)
@@ -83,7 +83,7 @@ carbon-aggregator.py attributes
 * `node['graphite']['carbon']['aggregator']['pickle_receiver_interface']` - pickle receiver IP (defaults to 0.0.0.0)
 * `node['graphite']['carbon']['aggregator']['pickle_receiver_port']` - pickle receiver port (defaults to 2024)
 * `node['graphite']['carbon']['aggregator']['destinations']` - list of carbon daemons to send metrics to
-* `node['graphite']['carbon']['aggregator']['replication_factor']` - used to add redundancy to your data by replicating every datapoing to more than one machinne (defaults to 1)
+* `node['graphite']['carbon']['aggregator']['replication_factor']` - used to add redundancy to your data by replicating every datapoint to more than one machinne (defaults to 1)
 * `node['graphite']['carbon']['aggregator']['max_queue_size']` - maximum queue of messages used to comunicate to other carbon daemons (defaults to 10000)
 * `node['graphite']['carbon']['aggregator']['use_flow_control']` - set this to "False" to drop datapoints received after the cache reaches *MAX_CACHE_SIZE* (defaults to "True")
 * `node['graphite']['carbon']['aggregator']['max_datapoints_per_message']` - maximum datapoints to send in a message between carbon daemons (defaults to 500)
